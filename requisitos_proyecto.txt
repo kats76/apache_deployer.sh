@@ -1,0 +1,25 @@
+Requisitos Funcionales:
+  Capacidad de desplegar un sitio web desde un repositorio o una carpeta local. Esto implicará la capacidad de clonar un repositorio git o copiar archivos desde una carpeta local al directorio de despliegue en el servidor.
+
+Requisitos No Funcionales:
+  Compatibilidad con distribuciones de Linux distintas de Debian: Esto significa que el script deberá ser compatible con otras distribuciones de Linux además de Debian. Puedes lograr esto escribiendo el script de manera que utilice comandos y sintaxis que funcionen en múltiples distribuciones.
+Rápido y seguro: El despliegue deberá realizarse de manera eficiente para minimizar el tiempo de inactividad del sitio web y deberá ser seguro para proteger la integridad de los datos y del sistema.
+
+Plataforma:
+  La plataforma de desarrollo es Bash, ya que estás escribiendo un script de shell para un servidor Linux.
+
+Herramientas:
+  Git y GitHub para el control de versiones y el almacenamiento del repositorio.
+Jenkins y Travis CI son herramientas de integración continua que te permiten automatizar el proceso de construcción, prueba y despliegue de tu aplicación. Jenkins es una herramienta de código abierto y Travis CI es un servicio en la nube. Ambos son excelentes para automatizar tareas repetitivas y asegurar que tu aplicación se compile y pruebe correctamente en diferentes entornos.
+
+Documentación:
+La documentación debería incluir instrucciones sobre cómo configurar el entorno de desarrollo, cómo usar el script de despliegue, cómo contribuir al proyecto (si es de código abierto), y cualquier otra información relevante para desarrolladores y usuarios finales.
+
+Despliegue:
+  Github alojamiento del script.
+
+Seguridad:
+  La seguridad debe ser una consideración en todas las etapas del proyecto, desde el diseño hasta el mantenimiento. Esto implica proteger los datos sensibles, asegurar la comunicación entre los componentes del sistema, implementar autenticación y autorización adecuadas, y mantener el sistema actualizado con parches de seguridad.
+
+Monitoreo:
+  Para monitorear el tiempo que tarda en realizarse todo el proceso de despliegue, podrías agregar registros de tiempo en tu script de despliegue para registrar cuánto tiempo lleva cada paso y luego analizar esos registros para identificar posibles cuellos de botella y áreas de mejora en el proceso de despliegue.

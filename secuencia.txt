@@ -1,0 +1,35 @@
++-------------------+                      +-------------------+
+|      Usuario      |                      |     Servidor      |
++-------------------+                      +-------------------+
+        |                                           |
+        v                                           v
+   Iniciar script
+        |------------------------------------------>|
+        |                                           |
+        |     Comprobar instalación Apache          |
+        |<------------------------------------------|
+        |                                           |
+        |     Solicitar enlace repositorio o        |
+        |        directorio                         |
+        |------------------------------------------>|
+        |                                           |
+        |         Clonar repositorio /              |
+        |        Mover directorio                   |
+        |<------------------------------------------|
+        |                                           |
+        |     Preguntar protocolo (HTTP/HTTPS)      |
+        |------------------------------------------>|
+        |                                           |
+        |    Cambiar configuración de Apache        |
+        |<------------------------------------------|
+        |                                           |
+        |    Solicitar certificado SSL (si HTTPS)   |
+        |------------------------------------------>|
+        |                                           |
+        |     Cambiar configuración HTTPS con SSL   |
+        |<------------------------------------------|
+        |                                           |
+        |     Informar resultado y terminar         |
+        |----------------------------------------->|
+        |                                           |
+
