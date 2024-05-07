@@ -1,74 +1,67 @@
 #!/bin/bash
 
-# Función para determinar la distribución del sistema
-get_distribution() {
-    if [ -r /etc/os-release ]; then
-        . /etc/os-release
-        if [ "$ID" = "debian" ] || [ "$ID_LIKE" = "debian" ]; then
-            echo "debian"
-        elif [ "$ID" = "ubuntu" ] || [ "$ID_LIKE" = "ubuntu" ]; then
-            echo "ubuntu"
-        elif [ "$ID" = "centos" ] || [ "$ID_LIKE" = "rhel fedora" ]; then
-            echo "centos"
-        elif [ "$ID" = "arch" ] || [ "$ID_LIKE" = "arch" ]; then
-            echo "arch"
+# Función para verificar el estado de Apache2
+estadoApache() {
+    if dpkg -l | grep -w '^ii  apache2\s' > /dev/null 2>&1 ; then
+        if systemctl is-active --quiet apache2 ; then
+            echo "activo"
+        else
+            echo "inactivo"
         fi
+    else
+        echo "no instalado"
     fi
 }
 
-# Función para instalar Apache en Arch Linux
-install_apache_arch() {
-    sudo pacman -Sy --noconfirm apache
-}
-
-# Función para iniciar Apache en Arch Linux
-start_apache_arch() {
-    sudo systemctl start httpd.service
-    sudo systemctl enable httpd.service
-}
-
-# Verificar si Apache está instalado
-if ! [ -x "$(command -v apache2)" ]; then
-    distribution=$(get_distribution)
-    case $distribution in
-        "arch")
-            echo "Instalando Apache en Arch Linux..."
-            install_apache_arch
-            start_apache_arch
-            ;;
-        *)
-            echo 'Error: Apache2 no está instalado. Instálalo e inténtalo de nuevo.' >&2
-            exit 1
-            ;;
-    esac
-fi
-
-# Mostrar la versión de Apache instalada
-apache_version=$(httpd -v | awk '/Apache/ {print $3}')
-echo "Apache $apache_version está instalado."
-
-# Determinar la ubicación de la carpeta de despliegue
-distribution=$(get_distribution)
-case $distribution in
-    "debian" | "ubuntu")
-        deploy_folder="/var/www/html"
-        ;;
-    "centos" | "arch")
-        deploy_folder="/srv/http"
-        ;;
-    *)
-        echo "No se pudo determinar la distribución del sistema. Por favor, verifica la ubicación de la carpeta de despliegue manualmente."
+# Función para instalar Apache2
+instalarApache() {
+    read -p "¿Desea instalar Apache2? (S/n): " respuesta
+    if [ "$respuesta" == "S" ] || [ "$respuesta" == "s" ] || [ -z "$respuesta" ]; then
+        estado=$(estadoApache)
+        if [ "$estado" == "activo" ]; then
+            echo "Apache2 ya está instalado y activo."
+        elif [ "$estado" == "inactivo" ]; then
+            # Instalar Apache2
+            sudo apt update
+            sudo apt install apache2
+            # Verificar si la instalación fue exitosa
+            estado_despues=$(estadoApache)
+            if [ "$estado_despues" == "activo" ]; then
+                echo "Apache2 se instaló correctamente."
+                # Iniciar el servicio Apache2
+                sudo systemctl start apache2
+                sudo systemctl enable apache2
+                echo "Apache2 se inició y se habilitó para ejecutarse en el arranque."
+            else
+                echo "Hubo un problema al instalar Apache2. Por favor, intente nuevamente."
+                exit 1
+            fi
+        elif [ "$estado" == "no instalado" ]; then
+            # Instalar Apache2 si no está instalado
+            sudo apt update
+            sudo apt install apache2
+            # Verificar si la instalación fue exitosa
+            if dpkg -l | grep -w '^ii  apache2\s' > /dev/null 2>&1 ; then
+                echo "Apache2 se instaló correctamente."
+                # Iniciar el servicio Apache2
+                sudo systemctl start apache2
+                sudo systemctl enable apache2
+                echo "Apache2 se inició y se habilitó para ejecutarse en el arranque."
+            else
+                echo "Hubo un problema al instalar Apache2. Por favor, intente nuevamente."
+                exit 1
+            fi
+        fi
+    elif [ "$respuesta" == "N" ] || [ "$respuesta" == "n" ]; then
+        echo "No se realizará la instalación de Apache2. Saliendo del programa."
+        exit 0
+    else
+        echo "Opción no válida. Por favor, seleccione S o n."
         exit 1
-        ;;
-esac
+    fi
+}
 
-# Solicitar al usuario la URL del repositorio
-read -p "Por favor ingresa la URL del repositorio: " repositorio_url
+# Ejecutar la función instalarApache
+estadoApache
+instalarApache
 
-# Clonar el repositorio desde la URL proporcionada
-git clone $repositorio_url /tmp/mi_repositorio
-
-# Mover el repositorio a la carpeta de despliegue
-sudo cp -r /tmp/mi_repositorio/* "$deploy_folder/"
-
-echo "Despliegue completado correctamente en $deploy_folder."
